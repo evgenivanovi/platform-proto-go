@@ -1,0 +1,6 @@
+proto_outdir = "vendorpb"
+
+[[dependencies]]
+protocol = "https"
+target = "github.com/evgenivanovi/platform-proto"
+branch = "main"

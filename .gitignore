@@ -5,3 +5,7 @@ bin/**/
 # Code generation
 gen/*
 gen/**/
+
+# Vendor
+vendorpb/*
+vendorpb/**/

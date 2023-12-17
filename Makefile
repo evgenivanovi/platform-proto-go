@@ -12,7 +12,7 @@ PB_GO_MODULE_NAME=$(PROJECT_PATH)/$(PROJECT_NAME_GO)
 PB_JAVA_MODULE_NAME=$(PROJECT_PATH)/$(PROJECT_NAME_JAVA)
 PB_KOTLIN_MODULE_NAME=$(PROJECT_PATH)/$(PROJECT_NAME_KOTLIN)
 
-PB_SRC_PATH=$(CURDIR)/platform-proto/proto
+PB_SRC_PATH=$(CURDIR)/vendorpb/proto
 PB_GEN_PATH=$(CURDIR)
 
 PB_GO_GEN_PATH=$(PB_GEN_PATH)
@@ -47,6 +47,9 @@ init:
 	@ls $(LOCAL_BIN)/protoc-gen-go-grpc &> /dev/null || \
 		GOBIN=$(LOCAL_BIN) go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
+	@ls $(LOCAL_BIN)/protodep &> /dev/null || \
+		GOBIN=$(LOCAL_BIN) go install github.com/stormcat24/protodep@latest
+
 	@ls $(LOCAL_BIN)/buf &> /dev/null || \
     		GOBIN=$(LOCAL_BIN) go install github.com/bufbuild/buf/cmd/buf@latest
 
@@ -73,13 +76,16 @@ proto/go/deps:
 	@ls $(LOCAL_BIN)/protoc-gen-go-grpc &> /dev/null || \
 		GOBIN=$(LOCAL_BIN) go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
+	@ls $(LOCAL_BIN)/protodep &> /dev/null || \
+    	  GOBIN=$(LOCAL_BIN) go install github.com/stormcat24/protodep@latest
+
 # __________________________________________________ #
 
 .PHONY: proto/go/init
 proto/go/init: proto/go/deps
-	@echo 'Generating module.'
-	@pushd $(PB_GO_GEN_PATH) > /dev/null && go mod init $(PB_GO_MODULE_NAME) || true && popd > /dev/null
-	@pushd $(PB_GO_GEN_PATH) > /dev/null && go mod tidy || true && popd > /dev/null
+	@echo 'Downloading proto files.'
+	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) \
+	protodep up -f
 
 # __________________________________________________ #
 
